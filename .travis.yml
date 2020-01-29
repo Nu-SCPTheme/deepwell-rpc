@@ -1,6 +1,13 @@
-dist: xenial
 language: rust
-rust: stable
+rust:
+  - stable
+  - beta
+  - nightly
+
+os:
+  - linux
+  - osx
+  - windows
 
 stages:
   - format
@@ -27,14 +34,6 @@ jobs:
       script:
         - cargo +nightly-2020-01-02 clippy
     - stage: test
-      rust:
-        - stable
-        - beta
-        - nightly
-      os:
-        - linux
-        - osx
-        - windows
       script:
         - cargo build --verbose --release
         - cargo test --verbose --release -- --nocapture
