@@ -19,13 +19,20 @@ If you wish to use its client, import the crate and use it as a library.
 
 The current API provided by the RPC server is as follows:
 
-`protocol() -> io::Result<String>`:
-Returns a static protocol version. Currently "0".
+__Miscellaneous:__
 
-`ping() -> io::Result<()>`:
-Determines if the server is reachable.
+```rust
+async fn protocol() -> String;
+async fn ping() -> String;
+async fn time() -> f64;
+```
 
-`time() -> io::Result<f64>`:
-Returns the system time on the server. It may be in any timezone and is not monotonic.
+__Session management:__
 
-(TODO)
+```
+async fn login(
+    username_or_email: String,
+    password: String,
+    remote_address: Option<String>,
+) -> Result<()>;
+```
