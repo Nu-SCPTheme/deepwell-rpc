@@ -1,4 +1,7 @@
 ## deepwell-rpc
+
+[![Build Status](https://travis-ci.org/Nu-SCPTheme/deepwell-rpc.svg?branch=master)](https://travis-ci.org/Nu-SCPTheme/deepwell-rpc)
+
 An RPC server and client for [DEEPWELL](https://github.com/Nu-SCPTheme/deepwell) calls.
 See the relevant crate documentation for more information about what services it provides.
 

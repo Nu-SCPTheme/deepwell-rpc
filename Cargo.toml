@@ -12,6 +12,9 @@ version = "0.0.6"
 authors = ["Ammon Smith <ammon.i.smith@gmail.com>"]
 edition = "2018" # this refers to the Cargo.toml
 
+[badges]
+travis-ci = { repository = "Nu-SCPTheme/deepwell-rpc", branch = "master" }
+
 [lib]
 name = "deepwell_rpc"
 path = "src/lib.rs"
