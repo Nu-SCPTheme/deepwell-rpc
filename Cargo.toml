@@ -11,7 +11,6 @@ exclude = [".gitignore", ".travis.yml"]
 version = "0.0.6"
 authors = ["Ammon Smith <ammon.i.smith@gmail.com>"]
 edition = "2018" # this refers to the Cargo.toml
-workspace = ".."
 
 [lib]
 name = "deepwell_rpc"
