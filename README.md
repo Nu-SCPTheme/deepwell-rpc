@@ -5,6 +5,8 @@
 An RPC server and client for [DEEPWELL](https://github.com/Nu-SCPTheme/deepwell) calls.
 See the relevant crate documentation for more information about what services it provides.
 
+The lint `#![forbid(unsafe_code)]` is set, and therefore this crate has only safe code. However dependencies may have unsafe internals.
+
 Available under the terms of the GNU Affero General Public License. See [LICENSE.md](LICENSE).
 
 ### Compilation
