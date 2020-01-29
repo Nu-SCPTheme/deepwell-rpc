@@ -9,6 +9,10 @@ stages:
   - doc
 
 jobs:
+  allow_failures:
+    - rust: nightly
+    - os: windows
+  fast_finish: true
   include:
     - stage: format
       before_script:
