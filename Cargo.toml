@@ -26,8 +26,8 @@ path = "src/main.rs"
 [dependencies]
 async-std = "1"
 color-backtrace = "0.3"
-deepwell = "0.0.9"
-deepwell-core = "0.0.6"
+deepwell = { path = "../deepwell" }
+deepwell-core = { path = "../deepwell/deepwell-core" }
 futures = "0.3"
 log = "0.4"
 pretty_env_logger = "0.3"
