@@ -1,0 +1,6 @@
+# Artifacts
+target/
+
+# Misc
+.*.swp
+*.rs.bak
