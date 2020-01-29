@@ -35,7 +35,7 @@ async fn time() -> f64;
 
 __Session management:__
 
-```
+```rust
 /// Begin a user session, using the given username/email and password.
 /// If known, `remote_address` refers to the client making the request.
 async fn login(
