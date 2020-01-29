@@ -1,7 +1,7 @@
 [package]
 name = "deepwell-rpc"
-description = "Database management and migrations service"
-repository = "https://github.com/Nu-SCPTheme/deepwell"
+description = "RPC server and client for DEEPWELL calls"
+repository = "https://github.com/Nu-SCPTheme/deepwell-rpc"
 readme = "README.md"
 license = "AGPL-3.0-or-later"
 keywords = ["wikidot", "revision", "database", "nuscp"]
