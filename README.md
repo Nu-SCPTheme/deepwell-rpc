@@ -22,14 +22,22 @@ The current API provided by the RPC server is as follows:
 __Miscellaneous:__
 
 ```rust
+/// Returns the static protocol version. Currently "0".
 async fn protocol() -> String;
+
+/// Determines if the server is reachable.
 async fn ping() -> String;
+
+/// Returns the system time on the server.
+/// It may be in any timezone and is not monotonic.
 async fn time() -> f64;
 ```
 
 __Session management:__
 
 ```
+/// Begin a user session, using the given username/email and password.
+/// If known, `remote_address` refers to the client making the request.
 async fn login(
     username_or_email: String,
     password: String,
