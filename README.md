@@ -48,3 +48,15 @@ async fn login(
     remote_address: Option<String>,
 ) -> Result<()>;
 ```
+
+### Server Execution
+
+If you want to expose a new RPC method, a few changes are needed. Firstly, the RPC prototype in `api.rs` must be adjusted.
+
+Once that is set, you implement client and server calls for it in in `client.rs` and `server.rs` respectively. The client
+call is a simple pass-through for the generated tarpc method. Somewhat similarly, the server call proxies to the corresponding
+DEEPWELL method.
+
+However, because `deepwell::Server` is not thread-safe, it is not actually kept in the tarpc instance. Instead it is run in
+a separate async task, with tasks fed into it via an enum in a provided input channel. Each request passes in a onceshot
+output channel, which is then awaited to get the result.
