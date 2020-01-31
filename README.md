@@ -10,7 +10,7 @@ The lint `#![forbid(unsafe_code)]` is set, and therefore this crate has only saf
 Available under the terms of the GNU Affero General Public License. See [LICENSE.md](LICENSE).
 
 ### Compilation
-This crate targets the latest stable Rust. At time of writing, that is 1.40.0
+This crate targets the latest stable Rust. At time of writing, that is 1.41.0
 
 ```sh
 $ cargo build --release
