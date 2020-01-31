@@ -29,15 +29,20 @@ jobs:
         - rustfmt --edition=2018 src/main.rs --check
     - stage: clippy
       before_script:
+        - .travis/download.sh deepwell
         - rustup toolchain install nightly-2020-01-02-x86_64-unknown-linux-gnu
         - rustup component add clippy --toolchain nightly-2020-01-02-x86_64-unknown-linux-gnu
       script:
         - cargo +nightly-2020-01-02 clippy
     - stage: test
+      before_script:
+        - .travis/download.sh deepwell
       script:
         - cargo build --verbose --release
         - cargo test --verbose --release -- --nocapture
     - stage: doc
+      before_script:
+        - .travis/download.sh deepwell
       script:
         - cargo doc --verbose --release
 
