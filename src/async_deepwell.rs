@@ -22,8 +22,8 @@
 //! and use `Send + Sync` future channels to communicate with it.
 
 use crate::StdResult;
-use deepwell::Server as DeepwellServer;
 use deepwell::Error as DeepwellError;
+use deepwell::Server as DeepwellServer;
 use futures::channel::{mpsc, oneshot};
 use futures::prelude::*;
 use ref_map::*;
