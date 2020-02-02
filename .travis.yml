@@ -15,23 +15,22 @@ before_script:
   # Add rustfmt
   - rustup component add rustfmt
   # Add clippy
-  - rustup toolchain install nightly-2020-01-02-x86_64-unknown-linux-gnu
-  - rustup component add clippy --toolchain nightly-2020-01-02-x86_64-unknown-linux-gnu
+  - .travis/clippy.sh setup
 
 script:
   # Ensure code is rustfmt'd
-  - echo ======================================== rustfmt =======================================
+  - .travis/banner.sh rustfmt
   - rustfmt --edition=2018 src/lib.rs --check
   - rustfmt --edition=2018 src/main.rs --check
   # Check clippy lints
-  - echo ======================================== clippy =======================================
-  - cargo +nightly-2020-01-02 clippy
+  - .travis/banner.sh clippy
+  - .travis/clippy.sh check
   # Run build
-  - echo ======================================== build =======================================
+  - .travis/banner.sh build
   - cargo build --verbose --release
   - cargo test --verbose --release -- --nocapture
   # Build documentation
-  - echo ======================================== docs =======================================
+  - .travis/banner.sh docs
   - cargo doc --verbose --no-deps
 
 jobs:
