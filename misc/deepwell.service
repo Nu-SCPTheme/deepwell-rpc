@@ -1,7 +1,8 @@
 [Unit]
 Description=RPC server for DEEPWELL calls
 Wants=network-online.target
-After=network.target network-online.target
+Requires=postgresql.service
+After=network.target network-online.target postgresql.service
 
 [Service]
 Type=simple
