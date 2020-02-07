@@ -24,6 +24,7 @@
 use crate::StdResult;
 use deepwell::Error as DeepwellError;
 use deepwell::Server as DeepwellServer;
+use deepwell_core::Session;
 use futures::channel::{mpsc, oneshot};
 use futures::prelude::*;
 use ref_map::*;
@@ -87,6 +88,6 @@ pub enum AsyncDeepwellRequest {
         username_or_email: String,
         password: String,
         remote_address: Option<String>,
-        response: oneshot::Sender<StdResult<(), DeepwellError>>,
+        response: oneshot::Sender<StdResult<Session, DeepwellError>>,
     },
 }

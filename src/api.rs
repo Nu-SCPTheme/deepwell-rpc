@@ -19,6 +19,7 @@
  */
 
 use crate::Result;
+use deepwell_core::Session;
 
 pub const PROTOCOL_VERSION: &str = "0";
 
@@ -34,7 +35,7 @@ pub trait Deepwell {
         username_or_email: String,
         password: String,
         remote_address: Option<String>,
-    ) -> Result<()>;
+    ) -> Result<Session>;
 
     // TODO
 }

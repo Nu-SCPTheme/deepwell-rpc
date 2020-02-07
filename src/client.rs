@@ -20,6 +20,7 @@
 
 use crate::api::{DeepwellClient, PROTOCOL_VERSION};
 use crate::Result;
+use deepwell_core::Session;
 use std::io;
 use std::net::SocketAddr;
 use tarpc::rpc::client::Config as RpcConfig;
@@ -76,7 +77,7 @@ impl Client {
         username_or_email: String,
         password: String,
         remote_address: Option<String>,
-    ) -> io::Result<Result<()>> {
+    ) -> io::Result<Result<Session>> {
         info!("Method: login");
 
         self.client

@@ -22,6 +22,7 @@ use crate::api::{Deepwell as DeepwellApi, PROTOCOL_VERSION};
 use crate::async_deepwell::AsyncDeepwellRequest;
 use crate::{Result, StdResult};
 use deepwell_core::Error as DeepwellError;
+use deepwell_core::Session;
 use futures::channel::{mpsc, oneshot};
 use futures::future::{self, BoxFuture, Ready};
 use futures::prelude::*;
@@ -139,7 +140,7 @@ impl DeepwellApi for Server {
     }
 
     // Sessions
-    type LoginFut = BoxFuture<'static, Result<()>>;
+    type LoginFut = BoxFuture<'static, Result<Session>>;
 
     fn login(
         mut self,
