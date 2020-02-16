@@ -21,9 +21,9 @@
 use crate::api::{DeepwellClient, PROTOCOL_VERSION};
 use crate::Result;
 use deepwell_core::Session;
-use std::{io, mem};
 use std::net::SocketAddr;
 use std::time::Duration;
+use std::{io, mem};
 use tarpc::rpc::client::Config as RpcConfig;
 use tarpc::rpc::context;
 use tarpc::serde_transport::tcp;
@@ -88,7 +88,11 @@ impl Client {
         let config = RpcConfig::default();
         let client = DeepwellClient::new(config, transport).spawn()?;
 
-        Ok(Client { client, address, timeout })
+        Ok(Client {
+            client,
+            address,
+            timeout,
+        })
     }
 
     async fn reconnect(&mut self) -> io::Result<()> {
@@ -120,14 +124,14 @@ impl Client {
     pub async fn ping(&mut self) -> io::Result<()> {
         info!("Method: ping");
 
-        self.client.ping(context::current()).await?;
+        retry!(self, self.client.ping(ctx!()))?;
         Ok(())
     }
 
     pub async fn time(&mut self) -> io::Result<f64> {
         info!("Method: time");
 
-        self.client.time(context::current()).await
+        retry!(self, self.client.time(ctx!()))
     }
 
     // Session
@@ -139,14 +143,15 @@ impl Client {
     ) -> io::Result<Result<Session>> {
         info!("Method: login");
 
-        self.client
-            .login(
-                context::current(),
-                username_or_email,
-                password,
-                remote_address,
+        retry!(
+            self,
+            self.client.login(
+                ctx!(),
+                username_or_email.clone(),
+                password.clone(),
+                remote_address.clone(),
             )
-            .await
+        )
     }
 
     // TODO
