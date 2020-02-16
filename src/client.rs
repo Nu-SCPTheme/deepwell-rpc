@@ -27,7 +27,53 @@ use std::time::Duration;
 use tarpc::rpc::client::Config as RpcConfig;
 use tarpc::rpc::context;
 use tarpc::serde_transport::tcp;
+use tokio::time::timeout;
 use tokio_serde::formats::Json;
+
+macro_rules! ctx {
+    () => {
+        context::current()
+    };
+}
+
+macro_rules! retry {
+    ($self:expr, $new_future:expr,) => {
+        retry!($self, $new_future);
+    };
+
+    ($self:expr, $new_future:expr) => {{
+        use io::{Error, ErrorKind};
+
+        let mut result = None;
+
+        for _ in 0..5 {
+            let fut = $new_future;
+
+            match timeout($self.timeout, fut).await {
+                Ok(resp) => {
+                    result = Some(resp?);
+                    break;
+                }
+                Err(_) => {
+                    warn!(
+                        "Remote call timed out ({:.3} seconds)",
+                        $self.timeout.as_secs_f64(),
+                    );
+
+                    // Attempt to reconnect
+                    if let Err(error) = $self.reconnect().await {
+                        warn!("Failed to reconnect to remote server");
+
+                        return Err(error);
+                    }
+                }
+            }
+        }
+
+        result
+            .ok_or_else(|| Error::new(ErrorKind::TimedOut, "Remote server not responding in time"))
+    }};
+}
 
 #[derive(Debug)]
 pub struct Client {
@@ -59,7 +105,7 @@ impl Client {
     pub async fn protocol(&mut self) -> io::Result<String> {
         info!("Method: protocol");
 
-        let version = self.client.protocol(context::current()).await?;
+        let version = retry!(self, self.client.protocol(ctx!()))?;
 
         if PROTOCOL_VERSION != version {
             warn!(
