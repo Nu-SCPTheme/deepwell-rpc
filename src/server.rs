@@ -21,8 +21,8 @@
 use crate::api::{Deepwell as DeepwellApi, PROTOCOL_VERSION};
 use crate::async_deepwell::AsyncDeepwellRequest;
 use crate::{Result, StdResult};
-use deepwell_core::Error as DeepwellError;
-use deepwell_core::Session;
+use deepwell::Error as DeepwellError;
+use deepwell_core::*;
 use futures::channel::{mpsc, oneshot};
 use futures::future::{self, BoxFuture, Ready};
 use futures::prelude::*;
@@ -158,6 +158,81 @@ impl DeepwellApi for Server {
                 username_or_email,
                 password,
                 remote_address,
+                response: send,
+            };
+
+            self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }
+
+    type LogoutFut = BoxFuture<'static, Result<()>>;
+
+    fn logout(
+        mut self,
+        _: Context,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> Self::LogoutFut {
+        info!("Method: logout");
+
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::Logout {
+                session_id,
+                user_id,
+                response: send,
+            };
+
+            self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }
+
+    type LogoutOthersFut = BoxFuture<'static, Result<Vec<Session>>>;
+
+    fn logout_others(
+        mut self,
+        _: Context,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> Self::LogoutOthersFut {
+        info!("Method: logout_others");
+
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::LogoutOthers {
+                session_id,
+                user_id,
+                response: send,
+            };
+
+            self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }
+
+    type CheckSessionFut = BoxFuture<'static, Result<()>>;
+
+    fn check_session(
+        mut self,
+        _: Context,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> Self::CheckSessionFut {
+        info!("Method: check_session");
+
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::CheckSession {
+                session_id,
+                user_id,
                 response: send,
             };
 

@@ -20,7 +20,7 @@
 
 use crate::api::{DeepwellClient, PROTOCOL_VERSION};
 use crate::Result;
-use deepwell_core::Session;
+use deepwell_core::*;
 use std::net::SocketAddr;
 use std::time::Duration;
 use std::{io, mem};
@@ -150,8 +150,38 @@ impl Client {
                 username_or_email.clone(),
                 password.clone(),
                 remote_address.clone(),
-            )
+            ),
         )
+    }
+
+    pub async fn logout(
+        &mut self,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> io::Result<Result<()>> {
+        info!("Method: logout");
+
+        retry!(self, self.client.logout(ctx!(), session_id, user_id))
+    }
+
+    pub async fn logout_others(
+        &mut self,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> io::Result<Result<Vec<Session>>> {
+        info!("Method logout_others");
+
+        retry!(self, self.client.logout_others(ctx!(), session_id, user_id),)
+    }
+
+    pub async fn check_session(
+        &mut self,
+        session_id: SessionId,
+        user_id: UserId,
+    ) -> io::Result<Result<()>> {
+        info!("Method: session");
+
+        retry!(self, self.client.check_session(ctx!(), session_id, user_id),)
     }
 
     // TODO

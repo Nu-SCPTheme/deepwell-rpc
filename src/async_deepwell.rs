@@ -24,12 +24,20 @@
 use crate::StdResult;
 use deepwell::Error as DeepwellError;
 use deepwell::Server as DeepwellServer;
-use deepwell_core::Session;
+use deepwell_core::*;
 use futures::channel::{mpsc, oneshot};
 use futures::prelude::*;
 use ref_map::*;
 
 const QUEUE_SIZE: usize = 64;
+
+type DeepwellResult<T> = StdResult<T, DeepwellError>;
+
+macro_rules! send {
+    ($response:expr, $result:expr) => {
+        $response.send($result).expect("Result receiver closed")
+    };
+}
 
 #[derive(Debug)]
 pub struct AsyncDeepwell {
@@ -73,7 +81,49 @@ impl AsyncDeepwell {
                         )
                         .await;
 
-                    response.send(result).expect("Result receiver closed");
+                    send!(response, result);
+                }
+                CheckSession {
+                    session_id,
+                    user_id,
+                    response,
+                } => {
+                    debug!("Received CheckSession request");
+
+                    let result = self
+                        .server
+                        .check_session(session_id, user_id)
+                        .await;
+
+                    send!(response, result);
+                }
+                Logout {
+                    session_id,
+                    user_id,
+                    response,
+                } => {
+                    debug!("Received Logout request");
+
+                    let result = self
+                        .server
+                        .end_session(session_id, user_id)
+                        .await;
+
+                    send!(response, result);
+                }
+                LogoutOthers {
+                    session_id,
+                    user_id,
+                    response,
+                } => {
+                    debug!("Received LogoutOthers request");
+
+                    let result = self
+                        .server
+                        .end_other_sessions(session_id, user_id)
+                        .await;
+
+                    send!(response, result);
                 }
             }
         }
@@ -88,6 +138,21 @@ pub enum AsyncDeepwellRequest {
         username_or_email: String,
         password: String,
         remote_address: Option<String>,
-        response: oneshot::Sender<StdResult<Session, DeepwellError>>,
+        response: oneshot::Sender<DeepwellResult<Session>>,
+    },
+    CheckSession {
+        session_id: SessionId,
+        user_id: UserId,
+        response: oneshot::Sender<DeepwellResult<()>>,
+    },
+    Logout {
+        session_id: SessionId,
+        user_id: UserId,
+        response: oneshot::Sender<DeepwellResult<()>>,
+    },
+    LogoutOthers {
+        session_id: SessionId,
+        user_id: UserId,
+        response: oneshot::Sender<DeepwellResult<Vec<Session>>>,
     },
 }

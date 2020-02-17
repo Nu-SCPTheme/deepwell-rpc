@@ -19,7 +19,7 @@
  */
 
 use crate::Result;
-use deepwell_core::Session;
+use deepwell_core::*;
 
 pub const PROTOCOL_VERSION: &str = "0";
 
@@ -36,6 +36,10 @@ pub trait Deepwell {
         password: String,
         remote_address: Option<String>,
     ) -> Result<Session>;
+
+    async fn logout(session_id: SessionId, user_id: UserId) -> Result<()>;
+    async fn logout_others(session_id: SessionId, user_id: UserId) -> Result<Vec<Session>>;
+    async fn check_session(session_id: SessionId, user_id: UserId) -> Result<()>;
 
     // TODO
 }
