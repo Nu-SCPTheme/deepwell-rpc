@@ -171,7 +171,7 @@ impl Client {
     ) -> io::Result<Result<Vec<Session>>> {
         info!("Method logout_others");
 
-        retry!(self, self.client.logout_others(ctx!(), session_id, user_id),)
+        retry!(self, self.client.logout_others(ctx!(), session_id, user_id))
     }
 
     pub async fn check_session(
@@ -181,7 +181,7 @@ impl Client {
     ) -> io::Result<Result<()>> {
         info!("Method: session");
 
-        retry!(self, self.client.check_session(ctx!(), session_id, user_id),)
+        retry!(self, self.client.check_session(ctx!(), session_id, user_id))
     }
 
     // TODO
