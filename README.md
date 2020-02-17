@@ -46,7 +46,18 @@ async fn login(
     username_or_email: String,
     password: String,
     remote_address: Option<String>,
-) -> Result<()>;
+) -> Result<Session>;
+
+/// Ends a user session, using the given session and user IDs.
+async fn logout(session_id: SessionId, user_id: UserId) -> Result<()>;
+
+/// Ends all sessions other than the current one for the current user.
+/// Ensures that the given session ID is valid for the user.
+/// Returns a list of sessions invalidated by this action.
+async fn logout_others(session_id: SessionId, user_id: UserId) -> Result<Vec<Session>>;
+
+/// Checks if the given session is currently valid for the current user.
+async fn check_session(session_id: SessionId, user_id: UserId) -> Result<()>;
 ```
 
 ### Server Execution
