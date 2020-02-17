@@ -169,12 +169,7 @@ impl DeepwellApi for Server {
 
     type LogoutFut = BoxFuture<'static, Result<()>>;
 
-    fn logout(
-        mut self,
-        _: Context,
-        session_id: SessionId,
-        user_id: UserId,
-    ) -> Self::LogoutFut {
+    fn logout(mut self, _: Context, session_id: SessionId, user_id: UserId) -> Self::LogoutFut {
         info!("Method: logout");
 
         let fut = async move {

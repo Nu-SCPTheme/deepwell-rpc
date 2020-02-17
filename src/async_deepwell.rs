@@ -90,11 +90,7 @@ impl AsyncDeepwell {
                 } => {
                     debug!("Received CheckSession request");
 
-                    let result = self
-                        .server
-                        .check_session(session_id, user_id)
-                        .await;
-
+                    let result = self.server.check_session(session_id, user_id).await;
                     send!(response, result);
                 }
                 Logout {
@@ -104,11 +100,7 @@ impl AsyncDeepwell {
                 } => {
                     debug!("Received Logout request");
 
-                    let result = self
-                        .server
-                        .end_session(session_id, user_id)
-                        .await;
-
+                    let result = self.server.end_session(session_id, user_id).await;
                     send!(response, result);
                 }
                 LogoutOthers {
@@ -118,11 +110,7 @@ impl AsyncDeepwell {
                 } => {
                     debug!("Received LogoutOthers request");
 
-                    let result = self
-                        .server
-                        .end_other_sessions(session_id, user_id)
-                        .await;
-
+                    let result = self.server.end_other_sessions(session_id, user_id).await;
                     send!(response, result);
                 }
             }
