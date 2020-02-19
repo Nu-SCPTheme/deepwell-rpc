@@ -20,8 +20,7 @@
 
 use crate::api::{Deepwell as DeepwellApi, PROTOCOL_VERSION};
 use crate::async_deepwell::AsyncDeepwellRequest;
-use crate::{Result, StdResult};
-use deepwell::Error as DeepwellError;
+use crate::Result;
 use deepwell_core::*;
 use futures::channel::{mpsc, oneshot};
 use futures::future::{self, BoxFuture, Ready};
@@ -116,22 +115,6 @@ impl Server {
 
         Ok(())
     }
-
-    /// Enqueues the deepwell request on the mpsc, and awaits the result oneshot for the result.
-    async fn call<T>(
-        &mut self,
-        request: AsyncDeepwellRequest,
-        recv: oneshot::Receiver<StdResult<T, DeepwellError>>,
-    ) -> Result<T> {
-        self.channel
-            .send(request)
-            .await
-            .expect("Deepwell server channel closed");
-
-        recv.await
-            .expect("Oneshot closed before result")
-            .map_err(|e| e.to_sendable())
-    }
 }
 
 impl DeepwellApi for Server {
@@ -194,19 +177,10 @@ impl DeepwellApi for Server {
     fn logout(mut self, _: Context, session_id: SessionId, user_id: UserId) -> Self::LogoutFut {
         info!("Method: logout");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::Logout {
-                session_id,
-                user_id,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, Logout, [
+            session_id,
+            user_id,
+        ])
     }
 
     type LogoutOthersFut = BoxFuture<'static, Result<Vec<Session>>>;
@@ -219,19 +193,10 @@ impl DeepwellApi for Server {
     ) -> Self::LogoutOthersFut {
         info!("Method: logout_others");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::LogoutOthers {
-                session_id,
-                user_id,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, LogoutOthers, [
+            session_id,
+            user_id,
+        ])
     }
 
     type CheckSessionFut = BoxFuture<'static, Result<()>>;
@@ -244,19 +209,10 @@ impl DeepwellApi for Server {
     ) -> Self::CheckSessionFut {
         info!("Method: check_session");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::CheckSession {
-                session_id,
-                user_id,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, CheckSession, [
+            session_id,
+            user_id,
+        ])
     }
 
     type CreateUserFut = BoxFuture<'static, Result<UserId>>;
@@ -264,20 +220,11 @@ impl DeepwellApi for Server {
     fn create_user(mut self, _: Context, name: String, email: String, password: String) -> Self::CreateUserFut {
         info!("Method: create_user");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::CreateUser {
-                name,
-                email,
-                password,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, CreateUser, [
+            name,
+            email,
+            password,
+        ])
     }
 
     type EditUserFut = BoxFuture<'static, Result<()>>;
@@ -285,19 +232,10 @@ impl DeepwellApi for Server {
     fn edit_user(mut self, _: Context, user_id: UserId, changes: UserMetadataOwned) -> Self::EditUserFut {
         info!("Method: edit_user");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::EditUser {
-                user_id,
-                changes,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, EditUser, [
+            user_id,
+            changes,
+        ])
     }
 
     // TODO
