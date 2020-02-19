@@ -77,11 +77,11 @@ async fn create_user(name: String, email: String, password: String) -> Result<Us
 async fn edit_user(user_id: UserId, changes: UserMetadataOwned) -> Result<()>;
 
 /// Retrieves information about a user from their ID.
-/// Errors with `user-not-found` if the ID is invalid.
-async fn get_user_from_id(user_id: UserId) -> Result<User>;
+async fn get_user_from_id(user_id: UserId) -> Result<Option<User>>;
 
 /// Retrieves information about the given users by ID.
-/// If an ID is invalid that instance is in the list is `None`.
+/// Returns users in the same order as the specified IDs.
+/// If an ID is invalid that instance is `None`.
 ///
 /// Can only fetch information from 100 users at once.
 async fn get_users_from_ids(user_ids: Vec<UserId>) -> Result<Vec<Option<User>>>;
@@ -90,6 +90,11 @@ async fn get_users_from_ids(user_ids: Vec<UserId>) -> Result<Vec<Option<User>>>;
 /// Returns `None` if no user with that username is found.
 /// Searches case-insensitively.
 async fn get_user_from_name(name: String) -> Result<Option<User>>;
+
+/// Retrieves information about a user from their email.
+/// Returns `None` if no user with that username is found.
+/// Searches case-insensitively.
+async fn get_user_from_email(email: String) -> Result<Option<User>>;
 ```
 
 ### Server Execution
