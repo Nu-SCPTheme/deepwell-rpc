@@ -41,16 +41,27 @@ macro_rules! forward {
     ($self:expr, $request:tt, [ $($field:ident),* , ] ) => {
         forward!($self, $request, [ $($field),* ])
     };
+
     ($self:expr, $request:tt, [ $($field:ident),* ] ) => {{
         let fut = async move {
             let (send, recv) = oneshot::channel();
 
+            // Build request enum
             let request = AsyncDeepwellRequest::$request {
                 $($field),*,
                 response: send,
             };
 
-            $self.call(request, recv).await
+            // Send to process
+            $self.channel
+                .send(request)
+                .await
+                .expect("Deepwell server channel closed");
+
+            // Wait for result to arrive
+            recv.await
+                .expect("Oneshot closed before result")
+                .map_err(|e| e.to_sendable())
         };
 
         fut.boxed()
