@@ -44,6 +44,8 @@ macro_rules! retry {
     ($self:expr, $new_future:expr) => {{
         use io::{Error, ErrorKind};
 
+        // Where to store the results while looping each retry
+        // Default is `None`, or 'never got answer'
         let mut result = None;
 
         for _ in 0..5 {
@@ -182,6 +184,65 @@ impl Client {
         info!("Method: session");
 
         retry!(self, self.client.check_session(ctx!(), session_id, user_id))
+    }
+
+    // User
+    pub async fn create_user(
+        &mut self,
+        name: String,
+        email: String,
+        password: String,
+    ) -> io::Result<Result<UserId>> {
+        info!("Method: create_user");
+
+        retry!(
+            self,
+            self.client
+                .create_user(ctx!(), name.clone(), email.clone(), password.clone()),
+        )
+    }
+
+    pub async fn edit_user(
+        &mut self,
+        user_id: UserId,
+        changes: UserMetadataOwned,
+    ) -> io::Result<Result<()>> {
+        info!("Method: edit_user");
+
+        retry!(
+            self,
+            self.client.edit_user(ctx!(), user_id, changes.clone()),
+        )
+    }
+
+    pub async fn get_user_from_id(&mut self, user_id: UserId) -> io::Result<Result<Option<User>>> {
+        info!("Method: get_user_from_id");
+
+        retry!(self, self.client.get_user_from_id(ctx!(), user_id))
+    }
+
+    pub async fn get_users_from_ids(
+        &mut self,
+        user_ids: Vec<UserId>,
+    ) -> io::Result<Result<Vec<Option<User>>>> {
+        info!("Method: get_users_from_ids");
+
+        retry!(
+            self,
+            self.client.get_users_from_ids(ctx!(), user_ids.clone()),
+        )
+    }
+
+    pub async fn get_user_from_name(&mut self, name: String) -> io::Result<Result<Option<User>>> {
+        info!("Method: get_user_from_name");
+
+        retry!(self, self.client.get_user_from_name(ctx!(), name.clone()))
+    }
+
+    pub async fn get_user_from_email(&mut self, email: String) -> io::Result<Result<Option<User>>> {
+        info!("Method: get_user_from_email");
+
+        retry!(self, self.client.get_user_from_email(ctx!(), email.clone()))
     }
 
     // TODO
