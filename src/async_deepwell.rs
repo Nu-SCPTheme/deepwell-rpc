@@ -113,6 +113,27 @@ impl AsyncDeepwell {
                     let result = self.server.end_other_sessions(session_id, user_id).await;
                     send!(response, result);
                 }
+                CreateUser {
+                    name,
+                    email,
+                    password,
+                    response,
+                } => {
+                    debug!("Received CreateUser request");
+
+                    let result = self.server.create_user(&name, &email, &password).await;
+                    send!(response, result);
+                }
+                EditUser {
+                    user_id,
+                    changes,
+                    response,
+                } => {
+                    debug!("Received EditUser request");
+
+                    let result = self.server.edit_user(user_id, changes.borrow()).await;
+                    send!(response, result);
+                }
             }
         }
 
@@ -142,5 +163,16 @@ pub enum AsyncDeepwellRequest {
         session_id: SessionId,
         user_id: UserId,
         response: oneshot::Sender<DeepwellResult<Vec<Session>>>,
+    },
+    CreateUser {
+        name: String,
+        email: String,
+        password: String,
+        response: oneshot::Sender<DeepwellResult<UserId>>,
+    },
+    EditUser {
+        user_id: UserId,
+        changes: UserMetadataOwned,
+        response: oneshot::Sender<DeepwellResult<()>>,
     },
 }

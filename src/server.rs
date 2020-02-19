@@ -237,5 +237,46 @@ impl DeepwellApi for Server {
         fut.boxed()
     }
 
+    type CreateUserFut = BoxFuture<'static, Result<UserId>>;
+
+    fn create_user(mut self, _: Context, name: String, email: String, password: String) -> Self::CreateUserFut {
+        info!("Method: create_user");
+
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::CreateUser {
+                name,
+                email,
+                password,
+                response: send,
+            };
+
+            self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }
+
+    type EditUserFut = BoxFuture<'static, Result<()>>;
+
+    fn edit_user(mut self, _: Context, user_id: UserId, changes: UserMetadataOwned) -> Self::EditUserFut {
+        info!("Method: edit_user");
+
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::EditUser {
+                user_id,
+                changes,
+                response: send,
+            };
+
+            self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }
+
     // TODO
 }

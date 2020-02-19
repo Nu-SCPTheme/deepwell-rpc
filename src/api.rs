@@ -41,5 +41,14 @@ pub trait Deepwell {
     async fn logout_others(session_id: SessionId, user_id: UserId) -> Result<Vec<Session>>;
     async fn check_session(session_id: SessionId, user_id: UserId) -> Result<()>;
 
+    // User
+    async fn create_user(name: String, email: String, password: String) -> Result<UserId>;
+    async fn edit_user(user_id: UserId, changes: UserMetadataOwned) -> Result<()>;
+    /*
+    async fn get_user_from_id(user_id: UserId) -> Result<User>;
+    async fn get_users_from_ids(user_ids: Vec<UserId>) -> Result<Vec<Option<User>>>;
+    async fn get_user_from_name(name: String) -> Result<Option<User>>;
+    */
+
     // TODO
 }
