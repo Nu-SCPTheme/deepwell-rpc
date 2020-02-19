@@ -134,6 +134,33 @@ impl AsyncDeepwell {
                     let result = self.server.edit_user(user_id, changes.borrow()).await;
                     send!(response, result);
                 }
+                GetUserFromId {
+                    user_id,
+                    response,
+                } => {
+                    debug!("Received GetUserFromId request");
+
+                    let result = self.server.get_user_from_id(user_id).await;
+                    send!(response, result);
+                }
+                GetUsersFromIds {
+                    user_ids,
+                    response,
+                } => {
+                    debug!("Received GetUsersFromIds request");
+
+                    let result = self.server.get_users_from_ids(&user_ids).await;
+                    send!(response, result);
+                }
+                GetUserFromName {
+                    name,
+                    response,
+                } => {
+                    debug!("Received GetUserFromName request");
+
+                    let result = self.server.get_user_from_name(&name).await;
+                    send!(response, result);
+                }
             }
         }
 
@@ -174,5 +201,17 @@ pub enum AsyncDeepwellRequest {
         user_id: UserId,
         changes: UserMetadataOwned,
         response: oneshot::Sender<DeepwellResult<()>>,
+    },
+    GetUserFromId {
+        user_id: UserId,
+        response: oneshot::Sender<DeepwellResult<User>>,
+    },
+    GetUsersFromIds {
+        user_ids: Vec<UserId>,
+        response: oneshot::Sender<DeepwellResult<Vec<Option<User>>>>,
+    },
+    GetUserFromName {
+        name: String,
+        response: oneshot::Sender<DeepwellResult<Option<User>>>,
     },
 }
