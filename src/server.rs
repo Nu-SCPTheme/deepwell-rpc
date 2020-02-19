@@ -37,6 +37,26 @@ use tokio_serde::formats::Json;
 // Prevent network socket exhaustion or related slowdown
 const MAX_PARALLEL_REQUESTS: usize = 16;
 
+macro_rules! forward {
+    ($self:expr, $request:tt, [ $($field:ident),* , ] ) => {
+        forward!($self, $request, [ $($field),* ])
+    };
+    ($self:expr, $request:tt, [ $($field:ident),* ] ) => {{
+        let fut = async move {
+            let (send, recv) = oneshot::channel();
+
+            let request = AsyncDeepwellRequest::$request {
+                $($field),*,
+                response: send,
+            };
+
+            $self.call(request, recv).await
+        };
+
+        fut.boxed()
+    }};
+}
+
 #[derive(Debug, Clone)]
 pub struct Server {
     channel: mpsc::Sender<AsyncDeepwellRequest>,
@@ -151,20 +171,11 @@ impl DeepwellApi for Server {
     ) -> Self::LoginFut {
         info!("Method: login");
 
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
-
-            let request = AsyncDeepwellRequest::TryLogin {
-                username_or_email,
-                password,
-                remote_address,
-                response: send,
-            };
-
-            self.call(request, recv).await
-        };
-
-        fut.boxed()
+        forward!(self, TryLogin, [
+            username_or_email,
+            password,
+            remote_address,
+        ])
     }
 
     type LogoutFut = BoxFuture<'static, Result<()>>;
