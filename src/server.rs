@@ -238,7 +238,7 @@ impl DeepwellApi for Server {
         ])
     }
 
-    type GetUserFromIdFut = BoxFuture<'static, Result<User>>;
+    type GetUserFromIdFut = BoxFuture<'static, Result<Option<User>>>;
 
     fn get_user_from_id(mut self, _: Context, user_id: UserId) -> Self::GetUserFromIdFut {
         info!("Method: get_user_from_id");
@@ -260,6 +260,14 @@ impl DeepwellApi for Server {
         info!("Method: get_user_from_name");
 
         forward!(self, GetUserFromName, [name])
+    }
+
+    type GetUserFromEmailFut = BoxFuture<'static, Result<Option<User>>>;
+
+    fn get_user_from_email(mut self, _: Context, email: String) -> Self::GetUserFromEmailFut {
+        info!("Method: get_user_from_email");
+
+        forward!(self, GetUserFromEmail, [email])
     }
 
     // TODO

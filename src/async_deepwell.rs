@@ -161,6 +161,15 @@ impl AsyncDeepwell {
                     let result = self.server.get_user_from_name(&name).await;
                     send!(response, result);
                 }
+                GetUserFromEmail {
+                    email,
+                    response,
+                } => {
+                    debug!("Received GetUserFromEmail request");
+
+                    let result = self.server.get_user_from_email(&email).await;
+                    send!(response, result);
+                }
             }
         }
 
@@ -204,7 +213,7 @@ pub enum AsyncDeepwellRequest {
     },
     GetUserFromId {
         user_id: UserId,
-        response: oneshot::Sender<DeepwellResult<User>>,
+        response: oneshot::Sender<DeepwellResult<Option<User>>>,
     },
     GetUsersFromIds {
         user_ids: Vec<UserId>,
@@ -214,4 +223,8 @@ pub enum AsyncDeepwellRequest {
         name: String,
         response: oneshot::Sender<DeepwellResult<Option<User>>>,
     },
+    GetUserFromEmail {
+        email: String,
+        response: oneshot::Sender<DeepwellResult<Option<User>>>,
+    }
 }
