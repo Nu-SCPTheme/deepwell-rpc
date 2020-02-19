@@ -60,6 +60,38 @@ async fn logout_others(session_id: SessionId, user_id: UserId) -> Result<Vec<Ses
 async fn check_session(session_id: SessionId, user_id: UserId) -> Result<()>;
 ```
 
+__User:__
+
+```rust
+/// Creates a new user with the given name, email, and password.
+///
+/// The username and email are checked for case-insensitive uniqueness among existing
+/// users, and the password is checked against the configured blacklist of weak or common
+/// passwords.
+///
+/// If successful, the user ID of the new user is returned.
+async fn create_user(name: String, email: String, password: String) -> Result<UserId>;
+
+/// Modifies the properties of a user, including name and email address.
+/// If the email is modified it will need to be re-verified.
+async fn edit_user(user_id: UserId, changes: UserMetadataOwned) -> Result<()>;
+
+/// Retrieves information about a user from their ID.
+/// Errors with `user-not-found` if the ID is invalid.
+async fn get_user_from_id(user_id: UserId) -> Result<User>;
+
+/// Retrieves information about the given users by ID.
+/// If an ID is invalid that instance is in the list is `None`.
+///
+/// Can only fetch information from 100 users at once.
+async fn get_users_from_ids(user_ids: Vec<UserId>) -> Result<Vec<Option<User>>>;
+
+/// Retrieves information about a user from their username.
+/// Returns `None` if no user with that username is found.
+/// Searches case-insensitively.
+async fn get_user_from_name(name: String) -> Result<Option<User>>;
+```
+
 ### Server Execution
 
 If you want to expose a new RPC method, a few changes are needed. Firstly, the RPC prototype in `api.rs` must be adjusted.
