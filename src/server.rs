@@ -37,6 +37,10 @@ use tokio_serde::formats::Json;
 const MAX_PARALLEL_REQUESTS: usize = 16;
 
 macro_rules! forward {
+    ($self:expr, $request:tt, [ $($field:ident),* ] , ) => {
+        forward!($self, $request, [ $($field),* ])
+    };
+
     ($self:expr, $request:tt, [ $($field:ident),* , ] ) => {
         forward!($self, $request, [ $($field),* ])
     };
@@ -165,11 +169,11 @@ impl DeepwellApi for Server {
     ) -> Self::LoginFut {
         info!("Method: login");
 
-        forward!(self, TryLogin, [
-            username_or_email,
-            password,
-            remote_address,
-        ])
+        forward!(
+            self,
+            TryLogin,
+            [username_or_email, password, remote_address],
+        )
     }
 
     type LogoutFut = BoxFuture<'static, Result<()>>;
@@ -177,10 +181,7 @@ impl DeepwellApi for Server {
     fn logout(mut self, _: Context, session_id: SessionId, user_id: UserId) -> Self::LogoutFut {
         info!("Method: logout");
 
-        forward!(self, Logout, [
-            session_id,
-            user_id,
-        ])
+        forward!(self, Logout, [session_id, user_id])
     }
 
     type LogoutOthersFut = BoxFuture<'static, Result<Vec<Session>>>;
@@ -193,10 +194,7 @@ impl DeepwellApi for Server {
     ) -> Self::LogoutOthersFut {
         info!("Method: logout_others");
 
-        forward!(self, LogoutOthers, [
-            session_id,
-            user_id,
-        ])
+        forward!(self, LogoutOthers, [session_id, user_id])
     }
 
     type CheckSessionFut = BoxFuture<'static, Result<()>>;
@@ -209,33 +207,34 @@ impl DeepwellApi for Server {
     ) -> Self::CheckSessionFut {
         info!("Method: check_session");
 
-        forward!(self, CheckSession, [
-            session_id,
-            user_id,
-        ])
+        forward!(self, CheckSession, [session_id, user_id])
     }
 
     type CreateUserFut = BoxFuture<'static, Result<UserId>>;
 
-    fn create_user(mut self, _: Context, name: String, email: String, password: String) -> Self::CreateUserFut {
+    fn create_user(
+        mut self,
+        _: Context,
+        name: String,
+        email: String,
+        password: String,
+    ) -> Self::CreateUserFut {
         info!("Method: create_user");
 
-        forward!(self, CreateUser, [
-            name,
-            email,
-            password,
-        ])
+        forward!(self, CreateUser, [name, email, password])
     }
 
     type EditUserFut = BoxFuture<'static, Result<()>>;
 
-    fn edit_user(mut self, _: Context, user_id: UserId, changes: UserMetadataOwned) -> Self::EditUserFut {
+    fn edit_user(
+        mut self,
+        _: Context,
+        user_id: UserId,
+        changes: UserMetadataOwned,
+    ) -> Self::EditUserFut {
         info!("Method: edit_user");
 
-        forward!(self, EditUser, [
-            user_id,
-            changes,
-        ])
+        forward!(self, EditUser, [user_id, changes])
     }
 
     type GetUserFromIdFut = BoxFuture<'static, Result<Option<User>>>;
