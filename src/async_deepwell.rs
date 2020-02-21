@@ -35,7 +35,10 @@ type DeepwellResult<T> = StdResult<T, DeepwellError>;
 
 macro_rules! send {
     ($response:expr, $result:expr) => {
-        $response.send($result).expect("Result receiver closed")
+        match $response.send($result) {
+            Ok(_) => trace!("Send response to method receiver"),
+            Err(_) => warn!("Method receiver closed, could not send"),
+        }
     };
 }
 
