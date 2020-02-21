@@ -18,6 +18,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#![allow(clippy::large_enum_variant)]
+
 use crate::Result;
 use deepwell_core::*;
 
