@@ -67,6 +67,16 @@ impl AsyncDeepwell {
 
         while let Some(request) = self.recv.next().await {
             match request {
+                Ping {
+                    response,
+                    ..
+                } => {
+                    debug!("Received Ping request");
+
+                    let result = self.server.ping().await;
+
+                    send!(response, result);
+                }
                 TryLogin {
                     username_or_email,
                     password,
@@ -170,6 +180,10 @@ impl AsyncDeepwell {
 
 #[derive(Debug)]
 pub enum AsyncDeepwellRequest {
+    Ping {
+        data: (),
+        response: oneshot::Sender<DeepwellResult<()>>,
+    },
     TryLogin {
         username_or_email: String,
         password: String,

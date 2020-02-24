@@ -133,13 +133,17 @@ impl DeepwellApi for Server {
         future::ready(str!(PROTOCOL_VERSION))
     }
 
-    type PingFut = Ready<String>;
+    type PingFut = BoxFuture<'static, Result<()>>;
 
-    #[inline]
-    fn ping(self, _: Context) -> Self::PingFut {
+    fn ping(mut self, _: Context) -> Self::PingFut {
         info!("Method: ping");
 
-        future::ready(str!("pong!"))
+        let data = ();
+        forward!(
+            self,
+            Ping,
+            [data],
+        )
     }
 
     type TimeFut = Ready<f64>;

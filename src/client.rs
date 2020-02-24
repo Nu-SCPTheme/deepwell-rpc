@@ -48,7 +48,7 @@ macro_rules! retry {
         // Default is `None`, or 'never got answer'
         let mut result = None;
 
-        for _ in 0..5 {
+        for _ in 0..5u8 {
             let fut = $new_future;
 
             match timeout($self.timeout, fut).await {
@@ -123,11 +123,10 @@ impl Client {
         Ok(version)
     }
 
-    pub async fn ping(&mut self) -> io::Result<()> {
+    pub async fn ping(&mut self) -> io::Result<Result<()>> {
         info!("Method: ping");
 
-        retry!(self, self.client.ping(ctx!()))?;
-        Ok(())
+        retry!(self, self.client.ping(ctx!()))
     }
 
     pub async fn time(&mut self) -> io::Result<f64> {

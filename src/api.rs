@@ -29,7 +29,7 @@ pub const PROTOCOL_VERSION: &str = "0";
 pub trait Deepwell {
     // Misc
     async fn protocol() -> String;
-    async fn ping() -> String;
+    async fn ping() -> Result<()>;
     async fn time() -> f64;
 
     // Session
