@@ -67,10 +67,7 @@ impl AsyncDeepwell {
 
         while let Some(request) = self.recv.next().await {
             match request {
-                Ping {
-                    response,
-                    ..
-                } => {
+                Ping { response, .. } => {
                     debug!("Received Ping request");
 
                     let result = self.server.ping().await;

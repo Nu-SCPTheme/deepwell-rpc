@@ -139,11 +139,7 @@ impl DeepwellApi for Server {
         info!("Method: ping");
 
         let data = ();
-        forward!(
-            self,
-            Ping,
-            [data],
-        )
+        forward!(self, Ping, [data])
     }
 
     type TimeFut = Ready<f64>;
