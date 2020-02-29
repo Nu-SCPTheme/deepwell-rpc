@@ -56,7 +56,7 @@ use ref_map::*;
 use std::io;
 
 pub use deepwell::{Config as DeepwellConfig, Server as DeepwellServer};
-pub use deepwell_core::SendableError;
+pub use deepwell_core::error::SendableError;
 
 pub type StdResult<T, E> = std::result::Result<T, E>;
 pub type Result<T> = StdResult<T, SendableError>;

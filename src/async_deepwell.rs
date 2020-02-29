@@ -24,7 +24,7 @@
 use crate::StdResult;
 use deepwell::Error as DeepwellError;
 use deepwell::Server as DeepwellServer;
-use deepwell_core::*;
+use deepwell_core::prelude::*;
 use futures::channel::{mpsc, oneshot};
 use futures::prelude::*;
 use ref_map::*;

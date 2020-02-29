@@ -20,7 +20,7 @@
 
 use crate::api::{DeepwellClient, PROTOCOL_VERSION};
 use crate::Result;
-use deepwell_core::*;
+use deepwell_core::prelude::*;
 use std::net::SocketAddr;
 use std::time::Duration;
 use std::{io, mem};

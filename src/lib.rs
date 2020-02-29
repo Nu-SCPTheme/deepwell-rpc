@@ -37,7 +37,7 @@ mod client;
 
 pub use self::api::{Deepwell as Api, PROTOCOL_VERSION};
 pub use self::client::Client;
-pub use deepwell_core::SendableError;
+pub use deepwell_core::error::SendableError;
 
 pub type StdResult<T, E> = std::result::Result<T, E>;
 pub type Result<T> = StdResult<T, SendableError>;

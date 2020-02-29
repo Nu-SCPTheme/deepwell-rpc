@@ -21,7 +21,7 @@
 #![allow(clippy::large_enum_variant)]
 
 use crate::Result;
-use deepwell_core::*;
+use deepwell_core::prelude::*;
 
 pub const PROTOCOL_VERSION: &str = "0";
 

@@ -21,7 +21,7 @@
 use crate::api::{Deepwell as DeepwellApi, PROTOCOL_VERSION};
 use crate::async_deepwell::AsyncDeepwellRequest;
 use crate::Result;
-use deepwell_core::*;
+use deepwell_core::prelude::*;
 use futures::channel::{mpsc, oneshot};
 use futures::future::{self, BoxFuture, Ready};
 use futures::prelude::*;
