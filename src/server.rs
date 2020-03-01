@@ -36,6 +36,25 @@ use tokio_serde::formats::Json;
 // Prevent network socket exhaustion or related slowdown
 const MAX_PARALLEL_REQUESTS: usize = 16;
 
+macro_rules! forward_impl {
+    ($self:expr, $request:expr, $recv:expr) => {{
+        let fut = async move {
+            // Send to process
+            $self.channel
+                .send($request)
+                .await
+                .expect("Deepwell server channel closed");
+
+            // Wait for result to arrive
+            $recv.await
+                .expect("Oneshot closed before result")
+                .map_err(|e| e.to_sendable())
+        };
+
+        fut.boxed()
+    }};
+}
+
 macro_rules! forward {
     ($self:expr, $request:tt, [ $($field:ident),* ] , ) => {
         forward!($self, $request, [ $($field),* ])
@@ -45,29 +64,27 @@ macro_rules! forward {
         forward!($self, $request, [ $($field),* ])
     };
 
+    // Request with listed fields (local variables)
     ($self:expr, $request:tt, [ $($field:ident),* ] ) => {{
-        let fut = async move {
-            let (send, recv) = oneshot::channel();
+        let (send, recv) = oneshot::channel();
 
-            // Build request enum
-            let request = AsyncDeepwellRequest::$request {
-                $($field),*,
-                response: send,
-            };
-
-            // Send to process
-            $self.channel
-                .send(request)
-                .await
-                .expect("Deepwell server channel closed");
-
-            // Wait for result to arrive
-            recv.await
-                .expect("Oneshot closed before result")
-                .map_err(|e| e.to_sendable())
+        let request = AsyncDeepwellRequest::$request {
+            $($field),*,
+            response: send,
         };
 
-        fut.boxed()
+        forward_impl!($self, request, recv)
+    }};
+
+    // Empty request
+    ($self:expr, $request:tt) => {{
+        let (send, recv) = oneshot::channel();
+
+        let request = AsyncDeepwellRequest::$request {
+            response: send,
+        };
+
+        forward_impl!($self, request, recv)
     }};
 }
 
@@ -138,8 +155,7 @@ impl DeepwellApi for Server {
     fn ping(mut self, _: Context) -> Self::PingFut {
         info!("Method: ping");
 
-        let data = ();
-        forward!(self, Ping, [data])
+        forward!(self, Ping)
     }
 
     type TimeFut = Ready<f64>;

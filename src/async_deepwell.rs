@@ -178,7 +178,6 @@ impl AsyncDeepwell {
 #[derive(Debug)]
 pub enum AsyncDeepwellRequest {
     Ping {
-        data: (),
         response: oneshot::Sender<DeepwellResult<()>>,
     },
     TryLogin {
