@@ -40,13 +40,15 @@ macro_rules! forward_impl {
     ($self:expr, $request:expr, $recv:expr) => {{
         let fut = async move {
             // Send to process
-            $self.channel
+            $self
+                .channel
                 .send($request)
                 .await
                 .expect("Deepwell server channel closed");
 
             // Wait for result to arrive
-            $recv.await
+            $recv
+                .await
                 .expect("Oneshot closed before result")
                 .map_err(|e| e.to_sendable())
         };
