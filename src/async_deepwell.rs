@@ -168,7 +168,11 @@ impl AsyncDeepwell {
                     let result = self.server.get_user_from_email(&email).await;
                     send!(response, result);
                 }
-                GetPageContents { wiki_id, slug, response } => {
+                GetPageContents {
+                    wiki_id,
+                    slug,
+                    response,
+                } => {
                     debug!("Received GetpageContents request");
 
                     let result = self.server.get_page_contents(wiki_id, &slug).await;
