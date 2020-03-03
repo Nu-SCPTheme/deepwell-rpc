@@ -244,5 +244,10 @@ impl Client {
         retry!(self, self.client.get_user_from_email(ctx!(), email.clone()))
     }
 
+    pub async fn get_page_contents(&mut self, wiki_id: WikiId, slug: String) -> io::Result<Result<Option<Box<[u8]>>>> {
+        info!("Method: get_page_contenst");
+        retry!(self, self.client.get_page_contents(ctx!(), wiki_id.clone(), slug.clone()))
+    }
+
     // TODO
 }

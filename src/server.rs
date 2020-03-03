@@ -287,5 +287,13 @@ impl DeepwellApi for Server {
         forward!(self, GetUserFromEmail, [email])
     }
 
+    type GetPageContentsFut = BoxFuture<'static, Result<Option<Box<[u8]>>>>;
+
+    fn get_page_contents(mut self, _: Context, wiki_id: WikiId, slug: String) -> Self::GetPageContentsFut {
+        info!("Method: get_page_contents");
+
+        forward!(self, GetPageContents, [wiki_id, slug])
+    }
+
     // TODO
 }
