@@ -168,6 +168,16 @@ impl AsyncDeepwell {
                     let result = self.server.get_user_from_email(&email).await;
                     send!(response, result);
                 }
+                GetPageContents {
+                    wiki_id,
+                    slug,
+                    response,
+                } => {
+                    debug!("Received GetpageContents request");
+
+                    let result = self.server.get_page_contents(wiki_id, &slug).await;
+                    send!(response, result);
+                }
             }
         }
 
@@ -227,5 +237,10 @@ pub enum AsyncDeepwellRequest {
     GetUserFromEmail {
         email: String,
         response: oneshot::Sender<DeepwellResult<Option<User>>>,
+    },
+    GetPageContents {
+        wiki_id: WikiId,
+        slug: String,
+        response: oneshot::Sender<DeepwellResult<Option<Box<[u8]>>>>,
     },
 }
