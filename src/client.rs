@@ -248,7 +248,7 @@ impl Client {
         &mut self,
         wiki_id: WikiId,
         slug: String,
-    ) -> io::Result<Result<Option<Box<[u8]>>>> {
+    ) -> io::Result<Result<Option<String>>> {
         info!("Method: get_page_contenst");
         retry!(
             self,

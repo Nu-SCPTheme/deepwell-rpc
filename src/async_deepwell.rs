@@ -241,6 +241,6 @@ pub enum AsyncDeepwellRequest {
     GetPageContents {
         wiki_id: WikiId,
         slug: String,
-        response: oneshot::Sender<DeepwellResult<Option<Box<[u8]>>>>,
+        response: oneshot::Sender<DeepwellResult<Option<String>>>,
     },
 }

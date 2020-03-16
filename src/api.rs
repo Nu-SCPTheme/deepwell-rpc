@@ -52,7 +52,7 @@ pub trait Deepwell {
     async fn get_user_from_email(email: String) -> Result<Option<User>>;
 
     // Page
-    async fn get_page_contents(wiki_id: WikiId, slug: String) -> Result<Option<Box<[u8]>>>;
+    async fn get_page_contents(wiki_id: WikiId, slug: String) -> Result<Option<String>>;
 
     // TODO
 }

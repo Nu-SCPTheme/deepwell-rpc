@@ -287,7 +287,7 @@ impl DeepwellApi for Server {
         forward!(self, GetUserFromEmail, [email])
     }
 
-    type GetPageContentsFut = BoxFuture<'static, Result<Option<Box<[u8]>>>>;
+    type GetPageContentsFut = BoxFuture<'static, Result<Option<String>>>;
 
     fn get_page_contents(
         mut self,
